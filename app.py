@@ -25,10 +25,16 @@ def home():
     search_text = request.args.get("searchlaukelis")
     if search_text:
         filtered_rows = Automobilis.query.filter(Automobilis.gamintojas.ilike(f"{search_text}%"))
-        return render_template("index.html", automobiliai=filtered_rows)
+        bendra_suma_be_pvm = sum([automobilis.kaina for automobilis in filtered_rows])
+        bendra_suma_su_pvm = sum([automobilis.kaina_su_pvm for automobilis in filtered_rows])
+        return render_template("index.html", automobiliai=filtered_rows, bendra_suma_be_pvm=bendra_suma_be_pvm,
+                               bendra_suma_su_pvm=bendra_suma_su_pvm)
     else:
-        all_cars = Automobilis.query.all()
-        return render_template("index.html", automobiliai=all_cars)
+        automobiliai = Automobilis.query.all()
+        bendra_suma_be_pvm = sum([automobilis.kaina for automobilis in automobiliai])
+        bendra_suma_su_pvm = sum([automobilis.kaina_su_pvm for automobilis in automobiliai])
+        return render_template("index.html", automobiliai=automobiliai, bendra_suma_be_pvm=bendra_suma_be_pvm,
+                               bendra_suma_su_pvm=bendra_suma_su_pvm)
 
 @app.route("/automobilis/<int:row_id>")
 def one_car(row_id):
